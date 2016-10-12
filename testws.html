@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <title>WS Test</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Websocket Example</h1>
+      <h2 id="wsstatus">Websocket Closed</h2>
+    </div>
+    <script type="text/javascript">
+      var conn = new WebSocket("ws://localhost:8080");
+      conn.onopen = function(event) {
+        document.getElementById('wsstatus').innerHTML = 'Websocket Open';
+      }
+      //conn.send();
+      conn.onmessage = function(event) {
+        console.log('Server: ' + event.data);
+      }
+
+      conn.onclose = function(event) {
+        document.getElementById('wsstatus').innerHTML = 'Websocket Closed';
+        console.log('Server: ' + event.reason);
+      }
+      //conn.close();
+    </script>
+  </body>
+</html>
