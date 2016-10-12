@@ -5,7 +5,7 @@ var server = dgram.createSocket({ type: "udp4", reuseAddr: true });
 
 server.bind(function() {
     server.setBroadcast(true);
-    setInterval(broadcastNew, 3000);
+    setInterval(broadcastNew, 10000);
 });
 
 function broadcastNew() {
