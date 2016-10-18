@@ -42,6 +42,11 @@ wss.on('connection', function connection(ws) {
     try
     {
        var json = JSON.parse(message);
+			 switch(json.event) {
+				 case 'fire':
+				 	firechannel(json.channel);
+					break;
+			 }
     }
     catch(e)
     {
@@ -109,9 +114,9 @@ function disconnectfirework($channel) {
 }
 function firechannel($channel) {
 	console.log('Firing Channel ' + $channel);
-	disconnectfirework($channel);
 	setTimeout(function() {
 		console.log('Channel Fired');
+		disconnectfirework($channel);
 	}, 1000);
 }
 function arm() {
