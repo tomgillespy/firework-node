@@ -20,21 +20,37 @@ board.on("ready", function() {
   var led = new five.Led(13);
   led.pulse(2000);
   $bready = true;
-  var checkpin = new five.Pin({
-    pin: 22,
+  var button = new five.Button(22);
+	var igniter = new five.Pin(30);
+	var statpin = new five.Pin({
+    pin: 35,
     type: "digital",
     mode: five.Pin.INPUT,
+  });;
+	$ig = false; 
+	statpin.query(function(state) {
+		console.log(state);
+	})
+	statpin.on("high", function() {
+		console.log("Monitor High");
+	});
+	statpin.on("low", function() {
+		console.log("Monitor Low");
+	});
+  button.on("press", function() {
+    console.log('Pressed');
+		if ($ig) {
+			igniter.low();
+			$ig = false;
+		} else {
+			igniter.high();
+			$ig = true;
+		}
   });
-  checkpin.on("high", function() {
-    console.log('Pin High');
+	button.on("hold", function(time) {
+    console.log('hold for ' + time);
     if ($isConn) {
       $ws_connection.send('Pin Gone High');
-    }
-  });
-  checkpin.on("low", function(event) {
-    console.log('Pin Low');
-    if ($isConn) {
-      $ws_connection.send('Pin Gone Low');
     }
   });
   $relays = new five.Relays([{pin: 46, type: 'NC'},
