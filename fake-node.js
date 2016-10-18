@@ -51,10 +51,14 @@ wss.on('connection', function connection(ws) {
     console.log(json);
     console.log($relays);
   });
+	ws.on('close', function() {
+		$isConn = false;
+		console.log('Controller Disconnected');
+	});
   $isConn = true;
   $ws_connection = ws;
   console.log(ws);
-  ws.send(JSON.stringify({channels: $channels, name: $nodeName}));
+  ws.send(JSON.stringify({event: 'connection', channels: $channels, name: $nodeName}));
 });
 
 var udpport = 6000;
@@ -72,6 +76,7 @@ function broadcastNew() {
         console.log('Sent: ' + $nodeName);
     });
 };
+broadcastNew();
 
 function isValidChannel($channel) {
 	if ($channel < 1) {
