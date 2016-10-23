@@ -26,8 +26,13 @@ board.on("ready", function() {
     pin: 35,
     type: "digital",
     mode: five.Pin.INPUT,
-  });;
-	$ig = false; 
+  });
+	this.io.digitalWrite(35, this.io.HIGH);
+	statpin.read(function(error, value) {
+  console.log(value); // This should write 1
+});
+
+	$ig = false;
 	statpin.query(function(state) {
 		console.log(state);
 	})

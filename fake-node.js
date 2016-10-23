@@ -8,6 +8,7 @@ var $relays = false;
 var $args = process.argv;
 var $channels = 0;
 
+//Cmd Args
 if ((typeof $args[2] == 'undefined') || ($args[2] == '')) {
 	console.log('You must provide a node name');
 	process.exit(1);
@@ -23,12 +24,9 @@ if ((typeof $args[3] == 'undefined') || ($args[3] == '')) {
 console.log('My Node Name is ' + $nodeName);
 console.log('I have ' + $channels + ' channels');
 
-
-
-//Setup
+//Setup Network Server
 
 var WebSocketServer = require('ws').Server, wss = new WebSocketServer({ port: $wsport });
-
 wss.on('error', function(event) {
   console.log('Websocket Error Encountered');
   console.log(event);
@@ -41,7 +39,6 @@ wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     try
     {
-       var json = JSON.parse(message);
 			 switch(json.event) {
 				 case 'fire':
 				 	firechannel(json.channel);
@@ -62,26 +59,28 @@ wss.on('connection', function connection(ws) {
 	});
   $isConn = true;
   $ws_connection = ws;
-  console.log(ws);
   ws.send(JSON.stringify({event: 'connection', channels: $channels, name: $nodeName}));
 });
 
+//Setup autodiscover
 var udpport = 6000;
 var dgram = require('dgram');
 var server = dgram.createSocket({ type: "udp4", reuseAddr: true });
-
 server.bind(function() {
     server.setBroadcast(true);
     setInterval(broadcastNew, 10000);
+		console.log('Autodiscovery Started');
 });
 
 function broadcastNew() {
     var message = new Buffer($nodeName);
     server.send(message, 0, message.length, udpport, "255.255.255.255", function() {
-        console.log('Sent: ' + $nodeName);
+
     });
 };
-broadcastNew();
+broadcastNew(); //Boradcast Packet Immediatly.
+
+
 
 function isValidChannel($channel) {
 	if ($channel < 1) {
